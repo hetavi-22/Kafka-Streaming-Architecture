@@ -286,5 +286,3 @@ Created as part of CSE511 course project.
 **Note**: This project demonstrates a production-ready streaming architecture pattern that can be adapted for various real-time data processing scenarios.
 ```
 
-## 2. .gitignore
-
