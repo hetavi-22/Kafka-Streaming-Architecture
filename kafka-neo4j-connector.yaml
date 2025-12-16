@@ -1,0 +1,70 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafka-connect-service
+spec:
+  selector:
+    app: kafka-neo4j-connector
+  ports:
+    - protocol: TCP
+      port: 8083
+      targetPort: 8083
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kafka-neo4j-connector
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kafka-neo4j-connector
+  template:
+    metadata:
+      labels:
+        app: kafka-neo4j-connector
+    spec:
+      containers:
+        - name: kafka-connect
+          image: veedata/kafka-neo4j-connect
+          ports:
+            - containerPort: 8083
+          env:
+            - name: CONNECT_BOOTSTRAP_SERVERS
+              value: "kafka-service:29092"
+            
+            - name: CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR
+              value: "1"
+            - name: CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR
+              value: "1"
+            - name: CONNECT_STATUS_STORAGE_REPLICATION_FACTOR
+              value: "1"
+
+            - name: CONNECT_REST_PORT
+              value: "8083"
+            - name: CONNECT_GROUP_ID
+              value: "quickstart-avro"
+            - name: CONNECT_CONFIG_STORAGE_TOPIC
+              value: "quickstart-avro-config"
+            - name: CONNECT_OFFSET_STORAGE_TOPIC
+              value: "quickstart-avro-offsets"
+            - name: CONNECT_STATUS_STORAGE_TOPIC
+              value: "quickstart-avro-status"
+            
+            - name: CONNECT_KEY_CONVERTER
+              value: "org.apache.kafka.connect.json.JsonConverter"
+            - name: CONNECT_VALUE_CONVERTER
+              value: "org.apache.kafka.connect.json.JsonConverter"
+            - name: CONNECT_INTERNAL_KEY_CONVERTER
+              value: "org.apache.kafka.connect.json.JsonConverter"
+            - name: CONNECT_INTERNAL_VALUE_CONVERTER
+              value: "org.apache.kafka.connect.json.JsonConverter"
+            
+            - name: CONNECT_REST_ADVERTISED_HOST_NAME
+              value: "kafka-connect-service"
+            
+            - name: CONNECT_KEY_CONVERTER_SCHEMAS_ENABLE
+              value: "false"
+            - name: CONNECT_VALUE_CONVERTER_SCHEMAS_ENABLE
+              value: "false"

@@ -1,0 +1,20 @@
+neo4j:
+  name: "neo4j-deployment"
+  password: "processingpipeline"
+  edition: "community"
+  acceptLicenseAgreement: "yes"
+
+config:
+  dbms.security.procedures.unrestricted: "gds.*"
+  dbms.security.procedures.allowlist: "gds.*"
+
+env:
+  NEO4J_PLUGINS: '["graph-data-science"]'
+
+services:
+  default:
+    type: ClusterIP
+  
+volumes:
+  data:
+    mode: "defaultStorageClass"
